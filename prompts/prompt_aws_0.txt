@@ -1,0 +1,17 @@
+Analyze the incident report step by step to extract structured information. Follow the reasoning steps:
+
+1. Identify the service name and service location. If there is no location information, use "UNKNOWN".
+2. From {service_category_lst}, select one most relevant service category.
+3. Extract the relevant sentence(s) that describe user symptoms. Then, from {user_symp_lst}, select one or more categories that best match the extracted symptoms.
+The definition for user_symptom_category: {user_symp_instruction}.
+4. Identify the start time, end time, and timezone. Format times as "HH:MM:SS" (24-hour, original timezone in the report).
+
+Finally, return the extracted information in a JSON object with the keys:
+service_name, location, service_category, start_time, end_time, timezone, user_symptom, user_symptom_category.
+
+Now, analyze the following incident report:
+\"\"\"
+title: {input_title}
+status: {input_status}
+description(HTML): {input_desc}
+\"\"\"

@@ -1,0 +1,4 @@
+,service_name,location,start_time,end_time,timezone,service_category,user_symptom_category,user_symptom
+TK-Precision,100.0,96.67,94.67,86.0,98.0,87.33,82.22,88.27
+TK-Recall,100.0,96.67,94.67,86.0,98.0,87.33,90.22,68.47
+TK-F1,100.0,96.67,94.67,86.0,98.0,87.33,83.9,75.51

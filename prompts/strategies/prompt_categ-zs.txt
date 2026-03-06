@@ -1,0 +1,14 @@
+Analyze the incident report step by step to extract structured information. From {service_category_lst}, select one most relevant service category.
+
+From {user_symp_lst}, select one or more categories that best match the extracted symptoms.
+The definition for user_symptom_category: {user_symp_instruction}.
+
+Finally, return the extracted information in a JSON object with the keys, Format times as "HH:MM:SS":
+service_name, location, service_category, start_time, end_time, timezone, user_symptom_category, user_symptom.
+
+Now, analyze the following incident report:
+\"\"\"
+title: {input_title}
+status: {input_status}
+description (HTML): {input_desc}
+\"\"\"

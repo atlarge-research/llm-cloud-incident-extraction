@@ -1,0 +1,2 @@
+,service_name,location,start_time,end_time,timezone,service_category,user_symptom_category,user_symptom,root_cause,root_cause_category
+EM-Accuracy,67.37,69.47,96.84,93.68,97.89,63.16,21.05,2.11,2.11,71.58

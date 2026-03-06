@@ -1,0 +1,31 @@
+Analyze the incident report step by step to extract structured information. From {service_category_lst}, select one most relevant service category.
+
+Return the extracted information in a JSON object with the keys:
+service_name, location, service_category, start_time, end_time, timezone, user_symptom_category, user_symptom.
+
+Here are two examples of incident report (labeled Q) and extracted information (labeled A).
+Q: 
+title: Amazon CloudWatch (Ireland)
+status: [RESOLVED] Delayed CloudWatch Metrics
+description: 
+11:55 AM PST We can confirm increased delays for CloudWatch log event processing for metric filter extraction and log subscriptions in the EU-WEST-1 Region. CloudWatch alarms may transition into "INSUFFICIENT_DATA" state if set on metrics extracted using log filters. We are are working towards resolution.
+12:49 PM PST We can confirm increased delays for CloudWatch log event processing for metric filter extraction and log subscriptions in the EU-WEST-1 Region. CloudWatch alarms may transition into "INSUFFICIENT_DATA" state if set on metrics extracted using log filters. We have isolated the likely root cause to a subsystem that saw an unexpected jump in resource consumption. We continue to work towards resolution.
+1:52 PM PST We have implemented a fix to address the CloudWatch log event processing delays in the EU-WEST-1 Region and are starting to see signs of recovery. We will provide an update once full recovery has been observed.
+2:56 PM PST Between 10:26 AM and 02:40 PM PST, we experienced increased delays for CloudWatch log event processing for metric filter extraction and log subscriptions in the EU-WEST-1 Region. This was due to a subsystem that saw an unexpected jump in resource consumption. The issue has been resolved and the service is operating normally. New events are processing as normal, while we work through the message backlog. We expect to completely drain the backlog over the next 1 hour.</div>
+A: 
+{{"service_name": "Amazon CloudWatch", "location": "Ireland", "service_category": "management", "start_time": "10:26:00", "end_time": "14:40:00", "timezone": "PST", "user_symptom_category": "DELAY", "user_symptom": "we experienced increased delays for CloudWatch log event processing for metric filter extraction and log subscriptions in the EU-WEST-1 Region."}} 
+
+Q:
+title: Amazon Elastic Load Balancing (Ireland)
+status: [RESOLVED] Delayed CloudWatch Metrics
+description: 
+Between 9:55 AM and 12:25 PM PDT, customers experienced intermittent delays in the availability of CloudWatch metrics for load balancers in the EU-WEST-1 Region. Connectivity to load balancers was not affected. The issue has been resolved and the service is operating normally.
+A: 
+{{"service_name": "Amazon Elastic Load Balancing", "location": "Ireland", "service_category": "network", "start_time": "09:55:00", "end_time": "12:25:00", "timezone": "PDT", "user_symptom_category": "DELAY, UNAVIL", "user_symptom": "customers experienced intermittent delays in the availability of CloudWatch metrics for load balancers in the EU-WEST-1 Region."}} 
+
+Now, analyze the following incident report:
+\"\"\"
+title: {input_title}
+status: {input_status}
+description (HTML): {input_desc}
+\"\"\"

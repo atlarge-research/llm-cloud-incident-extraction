@@ -1,0 +1,10 @@
+extract_fields,eval_method,full-zs,full-fs,basic-zs,basic-fs,cot-zs,categ-zs
+service_name,em,86.0,100.0,52.0,100.0,83.33,60.67
+location,em,48.0,96.67,38.0,83.33,57.33,44.67
+start_time,em,86.0,91.33,70.0,89.33,83.33,72.0
+end_time,em,83.33,86.0,64.0,86.0,78.67,71.33
+timezone,em,98.67,98.67,98.67,98.67,98.67,98.67
+service_category,em,77.33,71.33,64.67,76.0,80.0,61.33
+user_symptom_category,tk,88.5,88.94,9.76,50.19,9.33,90.0
+user_symptom,bs,84.33,92.90,84.79,93.79,83.09,81.63
+average_acc,average,71.08,79.23,49.74,73.06,61.44,62.44

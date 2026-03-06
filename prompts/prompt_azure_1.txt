@@ -1,0 +1,65 @@
+Analyze the incident report step by step to extract structured information. Follow the reasoning steps:
+
+1. Identify the service name and service location. 
+If more than two services or locations are mentioned, return "Multiple Services" for service name or "Multiple Regions" for location.
+If there is no information for the location, use "UNKNOWN".
+2. From {service_category_lst}, select one most relevant service category.
+3. Extract the relevant sentence(s) that describe user symptoms. Then, from {user_symp_lst}, select one or more categories that best match the extracted symptoms.
+The definition for user_symptom_category: {user_symp_instruction}.
+4. Extract the relevant sentence(s) that describe root causes. Then, from {root_cause_lst}, select only one categories that best match the extracted root causes.
+The definition for root_cause_category: {root_cause_instruction}.
+5. Identify the start time, end time, and timezone. Format times as "YYYYMMDDTHH:MM:SS" (24-hour, original timezone in the report).
+
+Finally, return the extracted information in a JSON object with the keys:
+service_name, location, service_category, start_time, end_time, timezone, user_symptom, user_symptom_category, root_cause, root_cause_category.
+
+Here are two examples of incident report (labeled Q) and extracted information (labeled A).
+Q: description: 
+What happened?
+Between 09:50 UTC and 17:21 UTC on 07 Sep 2022, a subset of customers using Azure Cosmos DB in North Europe may have experienced issues accessing services. Connections to Cosmos DB accounts in this region may have resulted in an error or timeout.
+Downstream Azure services that rely on Cosmos DB also experienced impact during this window - including Azure Communication Services, Azure Data Factory, Azure Digital Twins, Azure Event Grid, Azure IoT Hub, Azure Red Hat OpenShift, Azure Remote Rendering, Azure Resource Mover, Azure Rights Management, Azure Spatial Anchors, Azure Synapse, and Microsoft Purview.
+What went wrong and why?
+Cosmos DB load balances workloads across its infrastructure, within frontend and backend clusters. Our frontend load balancing procedure had a regression that did not factor in the effect of a reduction in available cluster capacity, due to ongoing maintenance. This surfaced during an ongoing platform maintenance event in one of the frontend clusters in the North Europe region, causing the availability issues described above. 
+How did we respond?
+Our monitors alerted us of the impact on this cluster. We ran two workstreams in parallel – one focused on identifying the reason for the issues themselves, while one focused on mitigating the customer impact. To mitigate, we load balanced off the impacted cluster by moving customer accounts to healthy clusters within the region.
+Given the volume of accounts we had to migrate, it took us time to safely load balance accounts – we had to analyze the state of each account individually, then systematically move each to an alternative healthy cluster in North Europe. This load balancing operation allowed the cluster to recover to a healthy operating state.
+Although we have the ability to mark a Cosmos DB region as offline (which would trigger automatic failover activities, for customers using multiple regions) we decided not to do that during this incident – as the majority of the clusters (and therefore customers) in the region were unimpacted.
+How are we making incidents like this less likely or less impactful?
+Already completed:
+Fixed the regression in our load balancer procedure, to safely factor in capacity fluctuations during maintenance.
+In progress:
+Improving our monitoring and alerting to detect these issues earlier and apply pre-emptive actions. (Estimated completion: October 2022)
+Improving our processes to reduce the impact time with a more structured manual load balancing sequence during incidents. (Estimated completion: October 2022)
+How can customers make incidents like this less impactful?
+Consider configuring your accounts to be globally distributed – enabling multi-region for your critical accounts would allow for a customer-initiated failover during regional service incidents like this one. For more details, refer to: https://docs.microsoft.com/azure/cosmos-db/distribute-data-globally
+More generally, consider evaluating the reliability of your applications using guidance from the Azure Well-Architected Framework and its interactive Well-Architected Review: https://docs.microsoft.com/en-us/azure/architecture/framework/resiliency
+Finally, consider ensuring that the right people in your organization will be notified about any future service issues - by configuring Azure Service Health alerts. These can trigger emails, SMS, push notifications, webhooks, and more: https://aka.ms/ash-alerts
+How can we make our incident communications more useful?
+We are piloting this "PIR" format as a potential replacement for our "RCA" (Root Cause Analysis) format.
+You can rate this PIR and provide any feedback using our quick 3-question survey: https://www.aka.ms/AzPIR/3TPC-DT8
+A:
+{{"service_name": "Azure Cosmos DB", "location": "North Europe", "service_category": "database", "start_time": "20220907T09:50:00", "end_time": "20220907T17:21:00", "timezone": "UTC", "user_symptom":"Connections to Cosmos DB accounts in this region may have resulted in an error or timeout.", "user_symptom_category":"ERROR, DELAY", "root_cause":"Our frontend load balancing procedure had a regression that did not factor in the effect of a reduction in available cluster capacity, due to ongoing maintenance.", "root_cause_category":"MAINTAIN"}} 
+
+Q: description:
+What happened?
+Between 15:39 UTC and 19:38 UTC on 23 January 2023, a subset of customers in the South Central US region may have experienced increased latency and/or intermittent connectivity issues while accessing services hosted in the region. Downstream services that were impacted by this intermittent networking issue included Azure App Services, Azure Cosmos DB, Azure IoT Hub, and Azure SQL DB.
+What went wrong and why?
+The Regional Network Gateway (RNG) in the South Central US region serves network traffic between Availability Zones, which includes datacenters in South Central US and network traffic in and out of the region. During this incident, a single router in the RNG experienced a hardware fault, causing a fraction of network packets to be dropped. Customers may have experienced intermittent connectivity errors and/or error notifications when accessing resources hosted in this region. 
+How did we respond?
+The Azure network design includes extensive redundancy such that, when a router fails, only a small fraction of the traffic through the network is impacted - and automated mitigation systems can restore full functionality by removing failed any routers from service. In this incident, there was a delay with our automated systems in detecting the hardware failure on the router, as there was no previously known signature for this specific hardware fault. Our synthetic probe-based monitoring fired an alert at 17:58 UTC, which helped to narrow down the potential causal location to the RNG. After further investigation we were able to pinpoint the offending router, but it took additional time to isolate because the failure made the router inaccessible via its management interfaces. The unhealthy router was isolated and removed from service at 19:38 UTC, which mitigated the incident. 
+How are we making incidents like this less likely or less impactful?
+We are implementing improvements to our standard operating procedures for this class of incident to help mitigate similar issues more quickly (Estimated completion: February 2023).
+We are implementing additional automated mitigation mechanisms to help identify and isolate such unhealthy routers more quickly in the future (Estimated completion: May 2023).
+We are still investigating the cause of the hardware fault and are collaborating weekly with the hardware vendor to diagnose this unknown OS/hardware failure and obtain deterministic repair actions.
+How can we make our incident communications more useful? 
+You can rate this PIR and provide any feedback using our quick 3-question survey: https://aka.ms/AzPIR/7NBR-T98
+A:
+{{"service_name": "Multiple Services", "location": "South Central US", "service_category": "OTHERS", "start_time": "20230123T15:39:00", "end_time": "20230123T19:38:00", "timezone": "UTC", "user_symptom":"a subset of customers in the South Central US region may have experienced increased latency and/or intermittent connectivity issues while accessing services hosted in the region.", "user_symptom_category":"UNAVIL, DELAY", "root_cause":"During this incident, a single router in the RNG experienced a hardware fault, causing a fraction of network packets to be dropped.", "root_cause_category":"DEPLOY"}} 
+
+
+
+
+Now, analyze the following incident report:
+\"\"\"
+description(HTML): {input_desc}
+\"\"\"

@@ -1,0 +1,40 @@
+Analyze the incident report step by step to extract structured information. Follow the reasoning steps:
+
+1. Identify the service name.
+2. From {service_category_lst}, select one most relevant service category.
+3. Extract the relevant sentence(s) that describe user symptoms. Then, from {user_symp_lst}, select one or more categories that best match the extracted symptoms.
+The definition for user_symptom_category: {user_symp_instruction}. If there is no information for the user symptoms, use "UNKNOWN".
+4. Identify the start time, end time, and timezone (select PST or PDT). Format times as "YYYY-MM-DDTHH:MM:SS" (24-hour, original timezone in the report). If there is no information for the time, use "UNKNOWN".
+
+Finally, return the extracted information in a JSON object with the keys:
+service_name, service_category, start_time, end_time, timezone, user_symptom, user_symptom_category.
+
+Here are two examples of incident report (labeled Q) and extracted information (labeled A).
+Q: 
+service: Google BigQuery
+description: 
+affectedlocations: array(id: europe-west4, title: Netherlands (europe-west4),
+       dtype=object), created: 2022-09-28T06:07:52+00:00, modified: 2022-09-28T06:07:53+00:00, status: AVAILABLE, text: The issue with Google BigQuery has been resolved for all affected users as of Tuesday, 2022-09-27 21:27 US/Pacific.\nWe thank you for your patience while we worked on resolving the issue., when: 2022-09-28T06:07:52+00:00
+ affectedlocations: array(id: europe-west4, title: Netherlands (europe-west4),
+       dtype=object), created: 2022-09-28T05:10:50+00:00, modified: 2022-09-28T05:10:51+00:00, status: SERVICEINFORMATION, text: Summary: We are experiencing an issue with Google BigQuery.\nDescription: Mitigation work is currently underway by our engineering team.\nWe do not have an ETA for mitigation at this point.\nWe will provide more information by Wednesday, 2022-09-28 00:00 US/Pacific.\nDiagnosis: Customers will experience increased latency. Query (and other) jobs will timeout, or fail.\nWorkaround: None at this time., when: 2022-09-28T05:10:50+00:00
+ affectedlocations: array(id: europe-west4, title: Netherlands (europe-west4),
+       dtype=object), created: 2022-09-28T04:13:20+00:00, modified: 2022-09-28T04:13:21+00:00, status: SERVICEINFORMATION, text: Summary: We are experiencing an issue with Google BigQuery.\nDescription: We are experiencing an issue with Google BigQuery beginning at Tuesday, 2022-09-27 19:56 US/Pacific.\nOur engineering team continues to investigate the issue.\nWe will provide an update by Tuesday, 2022-09-27 22:00 US/Pacific with current details.\nWe apologize to all who are affected by the disruption.\nDiagnosis: Customers will experience increased latency. Query (and other) jobs will timeout, or fail.\nWorkaround: None at this time., when: 2022-09-28T04:13:20+00:00
+external description: We are experiencing an issue with Google BigQuery.
+
+A:
+{{"service_name": "Google BigQuery", "service_category": "Analytics", "start_time": "2022-09-27T19:56:00", "end_time": "2022-09-27T21:27:00", "timezone": "PDT", "user_symptom_category": "ERROR, DELAY", "user_symptom": "Customers will experience increased latency. Query (and other) jobs will timeout, or fail."}} 
+
+Q:
+service: Google Cloud Networking
+description: 
+affectedlocations: None, created: 2019-11-01T19:38:45Z, modified: 2019-11-01T19:38:45Z, status: None, text: Our engineers have determined that Google Cloud Networking was impacted by the same underlying issue as the Google Compute Engine (GCE) incident. The start & end times have been updated in this incident to reflect the approximate impact period. Please refer to https://status.cloud.google.com/incident/compute/19008(https://status.cloud.google.com/incident/compute/19008) for the full impact details of the incident. No further updates will be provided here., when: 2019-11-01T19:38:45Z
+external description: We've received a report of issues with Google Cloud Networking.
+A:
+{{"service_name": "Google Cloud Networking", "service_category": "Network", "start_time": "UNKNOWN", "end_time": "UNKNOWN", "timezone": "UNKNOWN", "user_symptom_category": "UNKNOWN", "user_symptom": "UNKNOWN"}} 
+
+Now, analyze the following incident report:
+\"\"\"
+title: {input_title}
+description: {input_desc}
+external_description : {input_ext_desc}
+\"\"\"

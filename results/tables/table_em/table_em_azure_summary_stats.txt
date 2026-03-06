@@ -1,0 +1,6 @@
+gpt-3.5: 76.24%(zero-shot) → 78.20%(few-shot) (+1.96%, +2.6%)
+gpt-4o: 78.20%(zero-shot) → 77.29%(few-shot) (-0.91%, -1.2%)
+claude-3-5: 69.92%(zero-shot) → 80.00%(few-shot) (+10.08%, +14.4%)
+claude-4: 77.89%(zero-shot) → 79.25%(few-shot) (+1.36%, +1.7%)
+gemini-2.0: 64.21%(zero-shot) → 80.60%(few-shot) (+16.39%, +25.5%)
+gemini-2.5: 77.29%(zero-shot) → 77.90%(few-shot) (+0.61%, +0.8%)
